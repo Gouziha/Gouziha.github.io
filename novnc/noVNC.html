@@ -1,0 +1,1265 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>实验</title>
+    <!--引入样式文件-->
+    <link href="../../../static/images/favicon.ico" rel="shortcut icon">
+    <link rel="stylesheet" href="/static/novnc/other/examples/css/style.css" />
+    <link rel="stylesheet" href="/static/novnc/other/css/editormd.preview.css" />
+    <link rel="stylesheet" href="/static/novnc/app/styles/base.css" />
+    <link rel="stylesheet" href="/static/novnc/app/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="/static/novnc/app/css/bootstrap-theme.min.css" />
+    <link rel='stylesheet' href='/static/novnc/app/js/syntaxhighlighter/styles/shCore.css'>
+    <link rel='stylesheet' href='/static/novnc/app/js/syntaxhighlighter/styles/shThemeDefault.css'>
+    <link rel="stylesheet" href="/static/novnc/app/styles/cus.css" />
+    <link rel="stylesheet" href="../../../static/lib/css/showmsg.css">
+    <link href="/static/lib/editor/css/editormd.min.css" rel="stylesheet" type="text/css" />
+    <script src="/static/novnc/app/js/jquery-3.2.1.min.js"></script>
+    <script src="../../../static/lib/js/bootstrap.min.js"></script>
+    <script src="/static/novnc/other/examples/js/jquery.min.js"></script>
+    <script src="/static/novnc/other/lib/marked.min.js"></script>
+    <script src="/static/novnc/other/lib/prettify.min.js"></script>
+    <script src="/static/novnc/other/lib/raphael.min.js"></script>
+    <script src="/static/novnc/other/lib/underscore.min.js"></script>
+    <script src="/static/novnc/other/lib/sequence-diagram.min.js"></script>
+    <script src="/static/novnc/other/lib/flowchart.min.js"></script>
+    <script src="/static/novnc/other/lib/jquery.flowchart.min.js"></script>
+    <script src="/static/novnc/other/editormd.js"></script>
+    <script src="../../../static/lib/js/showmsg.js"></script>
+
+
+    <!--  <script src="../../static/layer/layer.js"></script> -->
+    <script language="javascript">
+        //防止页面后退
+        history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+        });
+    </script>
+    <style>
+        html,body {
+            height:100%;
+            *overflow:hidden; /* 消除IE7下的横向滚动条 */
+        }
+        body {
+            margin:0;
+            padding:0;
+            font-size:30px;
+            text-align:center;
+        }
+
+        .editormd-menu>li{ padding: 0px 1px; }
+        .editormd-menu>li.divider {position: relative; top: 15px; margin: 0px 2px; height: 22px; color: #f00; border-color: #dcdcdc }
+        .editormd-menu>li>a>.fa { padding: 0 }
+
+        .loading-mask{position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,.7); z-index: 90;}
+        .loadEffect{
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -50px;
+            margin-top: -50px;
+            width: 100px;
+            height: 100px;
+        }
+        .loadEffect span{
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: lightgreen;
+            position: absolute;
+            -webkit-animation: load 1.04s ease infinite;
+        }
+        @-webkit-keyframes load{
+            0%{
+                -webkit-transform: scale(1.2);
+                opacity: 1;
+            }
+            100%{
+                -webkit-transform: scale(.3);
+                opacity: 0.5;
+            }
+        }
+        .loadEffect span:nth-child(1){
+            left: 0;
+            top: 50%;
+            margin-top:-10px;
+            -webkit-animation-delay:0.13s;
+        }
+        .loadEffect span:nth-child(2){
+            left: 14px;
+            top: 14px;
+            -webkit-animation-delay:0.26s;
+        }
+        .loadEffect span:nth-child(3){
+            left: 50%;
+            top: 0;
+            margin-left: -10px;
+            -webkit-animation-delay:0.39s;
+        }
+        .loadEffect span:nth-child(4){
+            top: 14px;
+            right:14px;
+            -webkit-animation-delay:0.52s;
+        }
+        .loadEffect span:nth-child(5){
+            right: 0;
+            top: 50%;
+            margin-top:-10px;
+            -webkit-animation-delay:0.65s;
+        }
+        .loadEffect span:nth-child(6){
+            right: 14px;
+            bottom:14px;
+            -webkit-animation-delay:0.78s;
+        }
+        .loadEffect span:nth-child(7){
+            bottom: 0;
+            left: 50%;
+            margin-left: -10px;
+            -webkit-animation-delay:0.91s;
+        }
+        .loadEffect span:nth-child(8){
+            bottom: 14px;
+            left: 14px;
+            -webkit-animation-delay:1.04s;
+        }
+
+    </style>
+    <script type="text/javascript">
+        var end=new Date().getTime() + 1 * 60 * 60 * 1000;
+        function countTime() {
+            //获取当前时间
+            var date = new Date();
+            var now = date.getTime();
+
+            //时间差
+            var leftTime = end-now;
+            if(leftTime<1000*60*1 && leftTime>1000*59*1){
+            	testys();
+            }
+            if(leftTime<0){
+            	exit();
+            }
+            //定义变量 d,h,m,s保存倒计时的时间
+            var d=0,h=0,m=0,s=0;
+            if (leftTime>=0) {
+                d = Math.floor(leftTime/1000/60/60/24);
+                h = Math.floor(leftTime/1000/60/60%24);
+                m = Math.floor(leftTime/1000/60%60);
+                s = Math.floor(leftTime/1000%60);
+				if(h>=0 && h<10){
+					h="0"+h;
+				}
+				if(m>=0 && m<10){
+					m="0"+m;
+				}
+				if(s>=0 && s<10){
+					s="0"+s;
+				}
+                //将倒计时赋值到div中
+                document.getElementById("_h").innerHTML = h+"时";
+                document.getElementById("_m").innerHTML = m+"分";
+                document.getElementById("_s").innerHTML = s+"秒";
+                //递归每秒调用countTime方法，显示动态时间效果
+                setTimeout(countTime,1000);
+            }
+
+        }
+        function testys(){
+        	$("#delayBox").addClass('on')
+        }
+        
+        function isDelay(){
+        	end=end+1 * 60 * 30 * 1000;
+        	$('#delayBox').removeClass('on');
+        }
+        
+        function isNotDelay(){
+        	$('#delayBox').removeClass('on');
+        }
+        
+        
+        $(document).ready(function(){        	
+	       $('.delay_p span').on('click',function(){
+	       	//$('#delayBox').removeClass('on')
+	       	$(this).parent().parent().parent().removeClass('on');
+	       })
+        })
+    </script>
+    <script>
+        // 最后一次键盘鼠标操作的时间
+        var lastOperateTime;
+        // 启动检查时间，默认30分钟
+        var SCREENSAVER_TIME = 60000*30;
+        // 当用户执行键盘、鼠标操作后，执行的函数
+        function afterOperate() {
+            var thisOperateTime = lastOperateTime = new Date();
+            setTimeout(function(){
+                if(thisOperateTime == lastOperateTime) {
+
+                    $.ajax({
+                        type: "POST",
+                        url: "/experiment/deleteService",
+                        data: {
+                            name:name,
+                            signal:"session_status"
+                        },
+                        dataType: "JSON",
+                        success: function () {
+                            window.location.href="/";
+                        },
+                        error: function () {
+                            $("#title_msg").html('出现错误！');
+                            $("#showmsg").show();
+                        }
+                    });
+                } else {
+                    //用户又进行了操作
+                }
+            }, SCREENSAVER_TIME);
+        }
+        // 注册事件
+        document.onmousedown = afterOperate;
+        document.onscroll = afterOperate;
+
+    </script>
+
+</head>
+<body>
+<div class="loading-mask" style="display:none;" id="load">
+    <div class="loadEffect">
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+</div>
+<div class="screen-mid" id="all">
+    <div class="screen_left" id="myfile">
+        <div class="full-screen">文档全屏</div>
+        <div class="desk_fullScreen">桌面全屏</div>
+        <style>
+            .desk_fullScreen{
+                position: absolute;
+                top: 240px;
+                right: 0px;
+                padding: 3px 0;
+                width: 25px;
+                height: 112px;
+                font-size: 16px;
+                line-height: 28px;
+                color: #fff;
+                background-color: #0aba9b;
+                border-radius: 12px;
+                box-sizing: content-box;
+                z-index: 99;
+                cursor: pointer;
+                display: none;
+            }
+            .desk_fullScreen.full{
+
+            }
+        </style>
+        <script>
+            $('.desk_fullScreen').on('click',function () {
+                $('.screen_left').css('display','none')
+            })
+        </script>
+
+
+        <div class="screen_left_title">
+            <a class="selected lab_a"><i class="iconfont"></i>实验步骤</a>
+            <a class="doc_a"><i class="iconfont off"></i>实验文档</a>
+        </div>
+        <div class="left_doc" id="file">
+            <div class="vnc_lab step " id="lab_step">
+                <textarea id="appendTest" style="display:none;"></textarea>
+            </div>
+            <div class="vnc_lab mydoc off" id="lab_doc">
+            <div class="doc_bar">
+				<a class="doc_save" onclick="isExitImage(0)">保存</a>
+				<a class="doc_submit" onclick="isExitImage(1)">提交</a>
+			</div>
+                <!-- editormd start -->
+                <div class="editormd" id="test-editormd">
+                    <textarea class="editormd-markdown-textarea" name="test-editormd-markdown-doc" id="editormd" maxlength="24"></textarea>
+                    <!-- 第二个隐藏文本域，用来构造生成的HTML代码，方便表单POST提交，这里的name可以任意取，后台接受时以这个name键为准 -->
+                    <!-- html textarea 需要开启配置项 saveHTMLToTextarea == true -->
+                    <textarea class="editormd-html-textarea" name="editorhtml" id="editorhtml" maxlength="24"></textarea>
+                </div>
+                <!-- editormd end -->
+                <!-- <button class="doc_submit" type="button" onclick="submit()" >提交</button> -->
+
+                <script type="text/javascript">
+                    var testEditor;
+                    var testEditormd;
+                    testEditor=$(function() {
+                        testEditormd=editormd("test-editormd", {
+                            placeholder : "输入内容...",
+                            width   : '100%',
+                            height  : '90%',
+                            //markdown : md,
+                            codeFold : true,
+                            syncScrolling : "single",
+                            //你的lib目录的路径
+                            path    : "../../../static/lib/editor/js/",
+                            /**上传图片相关配置如下*/
+                            imageUpload : true,
+                            imageFormats : ["jpg", "jpeg", "gif", "png", "bmp", "webp"],
+                            imageUploadURL : "/student/cefile/uploadImage?ce_num="+num+"&cou_num="+cou_num,//注意你后端的上传图片服务地址
+                            toolbarIcons : function() {
+                                return ["bold", "italic", "|","list-ul","list-ol","|",
+                                    "link","image","code","preformatted-text","|",
+                                    "watch", "clear", "|"]
+                            },
+                            emoji: false,
+                            taskList: true,
+                            tocm: true,         // Using [TOCM]
+                            tex: true,                   // 开启科学公式TeX语言支持，默认关闭
+                            flowChart: true,             // 开启流程图支持，默认关闭
+                            sequenceDiagram: true,       // 开启时序/序列图支持，默认关闭,
+                            //这个配置在simple.html中并没有，但是为了能够提交表单，使用这个配置可以让构造出来的HTML代码直接在第二个隐藏的textarea域中，方便post提交表单。
+                            watch : false,
+                            saveHTMLToTextarea : true
+                        });
+                    });
+                    function isExitImage(flag){
+                        var type2;
+                        if(type==3){
+                            type2=1;
+                        }
+                        if(type==4){
+                            type2=2;
+                        }
+                        $.ajax({
+                            url:'/student/ceprogress/isExitImage',
+                            dataType:'json',
+                            type:'post',
+                            data:{ce_num:num,type:type2},
+                            success:function(data){
+                                if(data){
+                                    submit(flag)
+                                }else{
+                                    $("#title_msg").html('该实验已不存在，即将退出！');
+                                    $("#showmsg").show();
+                                    setTimeout(function(){
+                                    	location.href="/student";
+                                    }, 1000);
+                                }
+                            }
+                        })
+                    }
+                    function submit(flag){
+                    	if(is_do==1){
+                    		$("#title_msg").html('不能重复提交！');
+                    		$("#showmsg").show();
+                    		return;
+                    	}
+                        var type2;
+                        if(type==3){
+                            type2=1;
+                        }
+                        if(type==4){
+                            type2=2;
+                        }
+                        var editorhtml='';
+                        if(flag==0){
+                            editorhtml=$('#editormd').val();
+                        }else{
+                            editorhtml=$("#editorhtml").val();
+                        }
+                        var endTime = (new Date()).getTime();
+                        if(editorhtml!=null && editorhtml.length>0){
+                        	if(editorhtml.length>20000){
+                        		$("#title_msg").html('文档太长!');
+                        		$("#showmsg").show();
+                        		return;
+                        	}
+                        	var mddoc = $('#editormd').val();
+                            $.ajax({
+                                type: "POST",
+                                url: "/student/cefile/submitDoc",
+                                data: {'editormd': editorhtml,'mddoc': mddoc,'ce_num':num,'ce_name':_name,'cou_num':cou_num,'type':type2,'endTime':endTime,flag:flag},
+                                dataType: "JSON",
+                                success:function(data){
+                                    if(data){
+                                        if(flag==0){
+                                            $("#title_msg").html('保存成功!');
+                                            $("#showmsg").show();
+                                            is_do=0;
+                                        }else{
+                                            $("#title_msg").html('提交成功!');
+                                            $("#showmsg").show();
+                                            is_do=1;
+                                        }
+                                        setTimeout(function(){
+                                        	location.href="/student";
+                                        }, 1000);
+                                    }else{
+                                        if(flag==0){
+                                            $("#title_msg").html('保存失败!');
+                                            $("#showmsg").show();
+                                        }else{
+                                        	$("#title_msg").html('提交失败!');
+                                        	$("#showmsg").show();
+                                        }
+                                    }
+                                }
+                            });
+                        }else{
+                            if(flag==0){
+                                $("#title_msg").html('保存文档为空!');
+                                $("#showmsg").show();
+                            }else{
+                            	$("#title_msg").html('提交文档为空！');
+                            	$("#showmsg").show();
+                            }
+                        }
+                    }
+                   
+                </script>
+            </div>
+        </div>
+    </div>
+
+    <div class="screen_right" width="1366px" height="768px">
+        <div class="fixed">
+            <div class="cus-control-bar">
+                <a id="tui" class="nor" title="后退">
+                    <i class="iconfont" >&#xe633;</i>
+                </a>
+                <a id="picture" class="nor" title="截屏">
+                    <i class="iconfont" >&#xe635;</i>
+                </a>
+                <a id="share" class="nor" title="分享桌面">
+                    <i class="iconfont">&#xe649;</i>
+                </a>
+                <a id="reset" class="nor" title="重置">
+                    <i class="iconfont" >&#xe636;</i>
+                </a>
+                <a id="clipboard_button_2" onclick="copy()" class="nor" title="复制到实验机" data-toggle="modal" data-target="#lipboard-dialog">
+                    <i class="iconfont" >&#xe637;</i>
+                </a>
+                <a id="exit" class="nor" title="退出实验">
+                    <i class="iconfont" >&#xe634;</i>
+                </a>
+                <a id="desk_screen" class="nor exit_fullScreen" title="全屏">
+                    <i class="iconfont" id="button1" value="开始全屏" onclick="kaishi()">&#xe62a;</i>
+                    <i class="iconfont " id="button2" value="关闭全屏" onclick="guanbi()" >&#xe629;</i>
+                    <!--<input id="Button1" type="button" value="开始全屏" onclick="kaishi()" />
+                    <input id="Button2" type="button" value="关闭全屏" onclick="guanbi()" />-->
+                </a>
+
+                <div class="deadtime">
+                    <span id="_h">00</span>
+                    <span id="_m">00</span>
+                    <span id="_s">00</span>
+                </div>
+            </div>
+            <div class="dot"><i class="iconfont">&#xe62b;</i></div>
+        </div>
+        <div class="i_wrap" width="1366px" height="768px">
+            <iframe class="d_iframe" width="1366px" height="768px" src="#(http)" id="myiframe" scrolling="no" frameborder="0"></iframe>
+        </div>
+    </div>
+    
+    <!-- 弹框-延时 -->
+    <div class="delayBox" id="delayBox">
+		<div class="delayTop">
+			<p class="delay_p">提示<span>×</span></p>
+		</div>
+		<div class="delayBody">
+			<p id="dmsg">时间即将结束，注意保存实验文档！时间结束将自动退出！是否延时？</p>
+		</div>
+		<div class="delayFooter">
+			<button class="btn btn-save" onclick="isDelay()">延时</button>
+			<button class="btn btn-theme-border" onclick="isNotDelay()">取消</button>
+		</div>
+	</div>
+	
+	<!-- 弹框-重置 -->
+    <div class="delayBox" id="resetBox">
+		<div class="delayTop">
+			<p class="delay_p">提示<span>×</span></p>
+		</div>
+		<div class="delayBody">
+			<p id="dmsg">重置将初始化系统，所有的系统操作将不保存！确认重置？</p>
+		</div>
+		<div class="delayFooter">
+			<button class="btn btn-save" onclick="isReset()">重置</button>
+			<button class="btn btn-theme-border" onclick="isNotReset()">取消</button>
+		</div>
+	</div>
+	
+	<!-- 弹框-退出 -->
+    <div class="delayBox" id="exitBox">
+		<div class="delayTop">
+			<p class="delay_p">提示<span>×</span></p>
+		</div>
+		<div class="delayBody">
+			<p id="dmsg">退出实验，所有的系统操作将不保存！确认退出？</p>
+		</div>
+		<div class="delayFooter">
+			<button class="btn btn-save" onclick="isExit()">退出</button>
+			<button class="btn btn-theme-border" onclick="isNotExit()">取消</button>
+		</div>
+	</div>
+	
+	
+	<style>
+	.delayBox{
+		display: none;
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		z-index: 100;
+		margin-top: -100px;
+		margin-left: -200px;
+		width: 400px;
+		height: 200px;
+		background: #fff;
+		border: 1px solid #0dba9b
+	}
+	.delayBox.on{
+		display: block
+	}
+	.delayTop{
+		height: 40px;
+		background-color: #0dba9b;
+	}
+	.delay_p{
+		padding-left: 20px;
+		font-size: 16px;
+		line-height: 40px;
+	    color: #fff;
+		text-align: left;
+	}
+	.delay_p span{
+		display: inline-block;
+	    float: right;
+	    font-size: 20px;
+	    width: 40px;
+	    text-align: center;
+	    cursor: pointer
+	}
+	.delay_p span.hover{
+		color: #f00
+	}
+	.delayBody p{
+		margin-top: 20px;
+		padding:0 50px ;
+		font-size: 14px;
+	    line-height: 32px;
+	    text-align:center;
+	    color: #333;
+	}
+	.delayFooter{
+		padding: 10px 50px;
+		display: flex;
+		justify-content: space-around;
+	}
+	.delayFooter button.btn-save{
+		color: #fff;
+		background: #0dba9b;
+	}
+	.delayFooter button.btn-save:hover{
+		color: #fff;
+		background: #37ccb1;
+	}
+	.delayFooter button.btn-theme-border{
+		color: #0dba9b;
+		background: #fff;
+		border: 1px solid #0dba9b;
+	}
+	/* .delayFooter button.btn-theme-border{
+		color: #fff;
+		background: #f00;
+	} */
+	</style>
+		
+	
+    <div class="screen_main">
+        <div class="modal fade" id="lipboard-dialog" tabindex="-1" role="dialog" aria-labelledby="lipboard-dialog-label">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="ipboard-dialog-label">剪切板</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div>提示：请<span class="s">右键</span>复制外部内容，<span class="s">右键</span>粘贴到下面本文框内，实验环境内复制、粘贴也是用<span class="s">右键</span>，内外复制不支持<span class="s">中文</span></div>
+                        <textarea id="clipboard-text"></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button id="copy_btn" type="button" class="btn btn-default" data-dismiss="modal">复制</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="dialog-back fade in"></div>
+    </div>
+</div>
+
+<!-- 文档图片-模态框展示 -->
+<div class="modal" id="imgModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="width: 800px;margin: 200px auto">
+        <div class="modal-content">
+            <div class="modal-body" style="padding: 0px;">
+                <img src="" alt="" style="width:100%;height: 100%; object-fit:cover">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 消息提示模态框 -->
+<div class="showmsg_wrap" id="showmsg">
+	<div class="showmsgBox" id="showmsgBox">
+		<div class="showmsgTop">
+			<p class="showmsg_p">消息提示<span>×</span></p>
+		</div>
+		<div class="showmsgBody">
+			<p id="title_msg">消息提示</p>
+		</div>
+		<div class="showmsgFooter">
+			<button class="btn btn-save showmsg_close">关闭</button>
+		</div>
+	</div>
+</div>
+<!--分享模态框-->
+<div class="showmsg_wrap" id="share_box">
+    <div class="showmsgBox shareBox" id="shareBox" style="height: 430px;">
+        <div class="showmsgTop">
+            <p class="showmsg_p">分享桌面<span class="shareClose">×</span></p>
+        </div>
+        <div class="showmsgBody">
+            <div class="onlyread">
+                <p><strong>只读模式</strong>复制此链接给他人，分享此页面。</p>
+                <p><span id="read_a"></span><i class="copied">复制成功！</i></p>
+
+            </div>
+            <div class="together" id="together">
+                <p><strong>协作模式</strong>复制此链接给他人，请求他人协作。</p>
+                <p><span id="share_a"></span><i class="copied">复制成功！</i></p>
+            </div>
+        </div>
+        <div class="showmsgFooter">
+            <button class="btn btn-save showmsg_close shareClose">关闭</button>
+        </div>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var name='#(name)';
+    var num='#(num)';
+    var url='#(http)';
+    var type='#(type)';
+
+    var _name='#(_name)';
+    var cou_num='#(cou_num)';
+    var is_do='#(is_do)';
+    var handMap=0;
+    var screTime='#(screTime)';
+    var s_sign=0;
+    window.addEventListener('message', function(e) {
+        if(e.data=="keyPress"){
+            afterOperate();
+        }
+        else if(e.data.indexOf("_picture_picture_")!=-1){
+            //截图操作
+            var imgbase64 = e.data.split("_picture_picture_")[1];
+            sendData(e.data,handMap);
+        }
+        else{
+            $("#title_msg").html('Sorry,服务器繁忙,请稍后重试!');
+            $("#showmsg").show();
+            exit();
+        }
+
+
+    }, false);
+    function sendData(imageData,type){
+        var formData = new FormData();
+        var $Blob= getBlobBydataURI(imageData,'image/jpeg');
+        var timestamp = Date.parse(new Date());
+        var filename=timestamp+".jpg";
+        formData.append('file',$Blob,filename);
+        //1.手动截屏；2.自动截屏
+        if(type==1){
+            $.ajax({
+                url:'/student/cefile/uploadImage?ce_num='+num+'&cou_num='+cou_num,//接口
+                type:'post',
+                data:formData,
+                async: true,
+                crossDomain: true,
+                contentType: false,
+                processData: false,
+                success: function(data){
+                    var str='![]('+data.url+')  ';
+                    testEditormd.insertValue(str);
+                    testEditormd.focus();
+                }
+            });
+        }else{
+            $.ajax({
+                url:'/student/cefile/uploadScre?ce_num='+num+'&cou_num='+cou_num,
+                type:'post',
+                data:formData,
+                async: true,
+                crossDomain: true,
+                contentType: false,
+                processData: false,
+                success: function(data){
+                }
+            });
+        }
+    }
+
+    //转Blob
+    function getBlobBydataURI(dataURI,type){
+        var binary = atob(dataURI.split(',')[1]);
+        var array = [];
+        for(var i = 0; i < binary.length; i++) {
+            array.push(binary.charCodeAt(i));
+        }
+        return new Blob([new Uint8Array(array)], {type:type });
+    }
+    //每5分钟截一张图,学生端
+    if(type==3||type==4){
+        if(is_do!=1) {
+            var scretime=screTime+"0000";
+            setInterval(automap, scretime);
+        }
+        //1000表示一秒
+        //setInterval(automap, 1000);
+    }
+    function automap(){
+        handMap=2;
+        window.frames[0].postMessage("_image_picture_",url);
+    }
+    //markDown转HTMl
+    function mdToHml(){
+        $.ajax({
+            type:"POST",
+            url:"/md/get",
+            data:{
+                num:num,
+                type:type
+            },
+            dataType:"JSON",
+            success:function(data) {
+                $("#appendTest").val(data.file);
+                editormd.markdownToHTML("lab_step", {
+                    htmlDecode: "style,script,iframe", //可以过滤标签解码
+                    emoji: true,
+                    taskList:true,
+                    tex: true,               // 默认不解析
+                    flowChart:true,         // 默认不解析
+                    sequenceDiagram:true,  // 默认不解析
+                });
+
+
+                $('.screen_left img').each(function(i){
+                    $(this).attr('data-toggle','modal');
+                    $(this).attr('data-target','#imgModal');
+                    $(this).on('click',function(){
+                        var src = $(this).attr('src')
+                        console.log(src);
+                        $('#imgModal img').attr('src',src)
+                    })
+                })
+            },
+            error:function(data){
+                $("#title_msg").html('Md转html出错!');
+                $("#showmsg").show();
+            }
+        });
+    }
+
+    //重置实验机
+    $("#reset").click(function () {
+    	$("#resetBox").addClass('on');
+    });
+    
+    function isReset(){
+    	document.getElementById("load").style.display="";
+        if(type==1){
+        	var timestamp = (new Date()).getTime();
+            top.location.href="/teacher/exper/ExecExperById?exp_num="+num+"" +
+                "&exp_name="+_name+"&cou_num="+cou_num+"&signal=reset"+"&tp="+timestamp;
+        }
+        if(type==2){
+        	var timestamp = (new Date()).getTime();
+            top.location.href="/teacher/case/ExecCaseById?cas_num="+num+"" +
+                "&cas_name="+_name+"&cou_num="+cou_num+"&signal=reset"+"&tp="+timestamp;
+        }
+        if(type==3){
+        	var timestamp = (new Date()).getTime();
+            top.location.href="/student/ceprogress/execCeById?ce_type=exp_num"+"&ce_num="+num+"&cou_num="+cou_num+"&signal=reset"+"&ce_do="+is_do+"&screTime="+screTime+"&tp="+timestamp;
+        }
+
+        if(type==4){
+        	var timestamp = (new Date()).getTime();
+            top.location.href="/student/ceprogress/execCeById?ce_type=cas_num"+"&ce_num="+num+"&cou_num="+cou_num+"&signal=reset"+"&ce_do="+is_do+"&screTime="+screTime+"&tp="+timestamp;
+        }
+        $("#resetBox").removeClass('on')
+    }
+    
+    function isNotReset(){
+    	$("#resetBox").removeClass('on')
+    }
+    
+
+    $("#tui").click(function () {
+        if(type==1){
+            location.href="/teacher?sign=1";
+        }
+        if(type==2){
+            location.href="/teacher?sign=2";
+        }
+        if(type==3||type==4){
+            location.href="/student";
+        }
+    });
+
+    //退出实验机
+    $("#exit").click(function () {
+        $("#exitBox").addClass('on');
+    });
+    
+    function isExit(){
+    	$("#exitBox").removeClass('on');
+    	exit();
+    }
+    
+    function isNotExit(){
+    	$("#exitBox").removeClass('on');
+    }
+
+    function exit() {
+        $.ajax({
+            type:"POST",
+            url:"/experiment/deleteService",
+            data:{
+                name:name
+            },
+            dataType:"JSON",
+            success:function (data) {
+                if(data.code==200){
+                    if(type==1){
+                        location.href="/teacher?sign=1";
+                    }
+                    if(type==2){
+                        location.href="/teacher?sign=2";
+                    }
+                    if(type==3||type==4){
+                        location.href="/student";
+                    }
+
+                }else{
+                    $("#title_msg").html('服务器错误!');
+                    $("#showmsg").show();
+                }
+            },
+            error:function(data) {
+                $("#title_msg").html(data.status);
+                $("#showmsg").show();
+                location.href="/";
+            }
+        });
+    }
+
+    $(document).ready(function(){
+        mdToHml();
+        initDocMd();
+        if(type==1||type==2){
+        	$('.doc_a').css('display','none');
+        	$('#picture').css('display','none');
+        	$("#dmsg").html('时间即将结束,时间结束将自动退出！是否延时？');
+        }
+        if(type==3||type==4){
+        	//alert(is_do);
+        	if(is_do==1){
+	        	$('.doc_a').css('display','none');
+	        	$('#picture').css('display','none');
+        	}
+        }
+    });
+    function initDocMd() {
+        var doc_type;
+        if (type == 3 || type == 4) {  //学生端
+            if (type == 3) {
+                doc_type = 1
+            }
+            if (type == 4) {
+                doc_type = 2
+            }
+            if (is_do == 0) {   //学生未完成该实验
+                $.ajax({
+                    url: "/student/ceprogress/GetCeDocu",
+                    type: "post",
+                    dataType: "json",
+                    data: {cou_num: cou_num, ce_num: num, docu_type: doc_type},
+                    success: function (data) {
+                        var txt = data.ce_docu;
+                        $("#editormd").html(txt);
+                    }
+                })
+            }
+        }
+    }
+
+
+     // 屏幕自适应 开始
+        var ww = $(document).width();
+        var wh = $('body').height();
+        var wl = $('.screen_left').width();
+
+        $(".screen_right").height($('body').height());
+        $(".screen_right").width(parseInt($(".screen_right").height()*16/9));
+
+        $(".i_wrap").height($('body').height());
+        $(".i_wrap").width(parseInt($(".screen_right").height()*16/9));
+
+        $('.fixed').width($(".screen_right").width());
+        $('.left_doc').height($(document).height()-60);
+
+      function changeWH(){
+    	  $(".screen_right").height($('body').height());
+          $(".screen_right").width(parseInt($(".screen_right").height()*16/9));
+
+          $(".i_wrap").height($('body').height());
+          $(".i_wrap").width(parseInt($(".screen_right").height()*16/9));
+
+          $('.fixed').width($(".screen_right").width());
+          $('.left_doc').height($(document).height()-60);
+      }
+
+      window.onresize=function(){
+        changeWH();
+      }
+
+      var w = $(".screen_right").css("width").replace("px","")/$(".i_wrap").attr("width").replace("px","");
+      var h = $(".screen_right").css("height").replace("px","")/$(".i_wrap").attr("height").replace("px","");
+      $(".i_wrap").css("transform","scale(" + h*.89  +","+h + ")");
+
+
+      $(window).resize(function() {
+          $(".screen_right").height($('body').height());
+          $(".screen_right").width(parseInt($(".screen_right").height()*16/9));
+          var w = $(".screen_right").css("width").replace("px","")/$(".i_wrap").attr("width").replace("px","");
+          var h = $(".screen_right").css("height").replace("px","")/$(".i_wrap").attr("height").replace("px","");
+          $(".i_wrap").css("transform","scale(" + h*.89  +","+h + ")");
+
+      });
+
+    //屏幕自适应结束
+
+        //工具栏展开收起
+
+        $('.fixed').hover(function(){
+            $('.dot').addClass('on');
+        })
+
+        $('.dot').on('click',function(){
+            $('.fixed').toggleClass('off');
+            if($('.fixed').hasClass('off')){
+                $('.cus-control-bar').stop().animate({'top':'-42px'},200)
+                $('.dot i').html('&#xe62c;')
+            }else{
+                $('.cus-control-bar').stop().animate({'top':"0"},260)
+                $('.dot i').html('&#xe62b;')
+            }
+        })
+
+
+    //实验步骤/我的文档 切换
+    $('.screen_left_title a').each(function(i){
+        $(this).on('click',function(){
+            $(this).addClass('selected').siblings().removeClass('selected');//背景图
+            $('.left_doc .vnc_lab').eq(i).show().siblings().hide();//步骤文档切换
+            if($('.doc_a').hasClass('selected')){
+                $('i[name="watch"]').click();
+                $('i[name="watch"]').click();
+            }
+        })
+    });
+
+ 	// 显示桌面/隐藏桌面 切换
+    $('.full-screen').on('click',function(){
+        $('.screen_left').toggleClass('max-width');
+        if($('.screen_left').hasClass('max-width')){
+            $('.full-screen').html('显示桌面');
+            $('.full-screen').addClass('desk');
+            $('.screen_right').addClass('off');
+            $('i[name="watch"]').click();
+            $('i[name="watch"]').click();
+        }else{
+            $('.full-screen').html('文档全屏');
+            $('.full-screen').removeClass('desk');
+            $('.screen_right').removeClass('off');
+            $('i[name="watch"]').click();
+            $('i[name="watch"]').click();
+        }
+    })
+
+    $("#copy_btn").click(function() {
+        var text=$("#clipboard-text").val();
+        window.frames[0].postMessage(text,url);
+    });
+
+    $("#picture").click(function () {
+        handMap=1;
+        window.frames[0].postMessage("_image_picture_",url);
+    });
+    //分享桌面 开始
+    $("#share").click(function () {
+ 		/* $("#share_box").show();
+        $("#read_a").html(url);
+        $("#share_a").html(url); */
+		if(s_sign<1){
+        	if(type==1||type==2){
+            	$.ajax({
+                    url:"/teacher/getshare",
+                    type:"post",
+                    dataType:"json",
+                    data:{"url":url,"expname":_name,"utype":"0"},
+                    success:function (data) {
+                    	$("#share_box").show();
+                        $("#read_a").html('http://'+window.location.host+"/teacher/share?skey="+data.rdkeystr);
+                    	$("#together").hide();
+                    	s_sign++;
+                    }
+                })
+            	
+            }
+            if(type==3||type==4){
+            	 $.ajax({
+                     url:"/student/getshare",
+                     type:"post",
+                     dataType:"json",
+                     data:{"url":url,"expname":_name,"utype":"1"},
+                     success:function (data) {
+                    	 $("#share_box").show();
+                         $("#read_a").html('http://'+window.location.host+"/student/share?skey="+data.rdkeystr);
+                         $("#share_a").html('http://'+window.location.host+"/student/share?skey="+data.cokeystr);
+                    	 
+                         s_sign++;
+                     }
+                 })
+            }
+        }else{
+        	$("#share_box").show();
+        }
+		
+    });
+
+    function copyArticle(con) {
+        const range = document.createRange();
+        range.selectNode(document.getElementById(con));
+        const selection = window.getSelection();
+        if(selection.rangeCount > 0) selection.removeAllRanges();
+        selection.addRange(range);
+        document.execCommand('copy');
+        // alert('复制成功！')
+        // alert(123)
+    }
+
+    $('#read_a').click(function () {
+        copyArticle('read_a');
+        $(this).siblings().addClass('on');
+        $('.together .copied').removeClass('on')
+    });
+    
+    $('#share_a').click(function () {
+        copyArticle('share_a')
+        $(this).siblings().addClass('on');
+        $('.onlyread .copied').removeClass('on')
+    });
+    
+    $('.shareClose').on('click',function () {
+        $('#share_box').hide()
+        $('.copied').removeClass('on');
+    })
+    //分享桌面 结束
+
+    function copy() {
+        //$("#clipboard_button_2").click();
+    }
+
+    /*  禁用复制等功能 */
+ 	 //屏蔽右键菜单
+	/* document.oncontextmenu = function (event){
+	    if(window.event){
+	        event = window.event;
+	    }try{
+	        var the = event.srcElement;
+	        if (!((the.tagName == "INPUT" && the.type.toLowerCase() == "text") || the.tagName == "TEXTAREA")){
+	            return false;
+	        }
+	        return true;
+	    }catch (e){
+	        return false;
+	    }
+	}
+    //禁用F5刷新
+	document.onkeydown = function ()
+	{
+	    if (event.keyCode == 116) {
+	        event.keyCode = 0;
+	        event.cancelBubble = true;
+	        return false;
+	    }
+	} */
+
+	/* //屏蔽粘贴
+	document.onpaste = function (event){
+	    if(window.event){
+	        event = window.event;
+	    }try{
+	        var the = event.srcElement;
+	        if (!((the.tagName == "INPUT" && the.type.toLowerCase() == "text") || the.tagName == "TEXTAREA")){
+	            return false;
+	        }
+	        return true;
+	    }catch (e){
+	        return false;
+	    }
+	}
+
+	//屏蔽复制
+	document.oncopy = function (event){
+	    if(window.event){
+	        event = window.event;
+	    }try{
+	        var the = event.srcElement;
+	        if(!((the.tagName == "INPUT" && the.type.toLowerCase() == "text") || the.tagName == "TEXTAREA")){
+	            return false;
+	        }
+	        return true;
+	    }catch (e){
+	        return false;
+	    }
+	}
+
+	//屏蔽剪切
+	document.oncut = function (event){
+	    if(window.event){
+	        event = window.event;
+	    }try{
+	        var the = event.srcElement;
+	        if(!((the.tagName == "INPUT" && the.type.toLowerCase() == "text") || the.tagName == "TEXTAREA")){
+	            return false;
+	        }
+	        return true;
+	    }catch (e){
+	        return false;
+	    }
+	}
+
+	//屏蔽选中
+	document.onselectstart = function (event){
+	    if(window.event){
+	        event = window.event;
+	    }try{
+	        var the = event.srcElement;
+	        if (!((the.tagName == "INPUT" && the.type.toLowerCase() == "text") || the.tagName == "TEXTAREA")){
+	            return false;
+	        }
+	        return true;
+	    } catch (e) {
+	        return false;
+	    }
+	}
+
+	//禁用复制  结束*/
+
+    countTime();
+
+
+
+
+    /*全屏显示  退出全屏*/
+
+    $('#button1').on('click',function () {
+        $(this).addClass('off').siblings().addClass('on');
+        $('#desk_screen').attr("title","退出全屏")
+    })
+    $('#button2').on('click',function () {
+        $(this).removeClass('on').siblings().removeClass('off');
+        $('#desk_screen').attr("title","全屏")
+    })
+
+    //开始全屏
+    function kaishi()
+    {
+        var docElm = document.documentElement;
+        //W3C
+        if (docElm.requestFullscreen) {
+            docElm.requestFullscreen();
+        }
+        //FireFox
+        else if (docElm.mozRequestFullScreen) {
+            docElm.mozRequestFullScreen();
+        }
+        //Chrome等
+        else if (docElm.webkitRequestFullScreen) {
+            docElm.webkitRequestFullScreen();
+        }
+        //IE11
+        else if (elem.msRequestFullscreen) {
+            elem.msRequestFullscreen();
+        }
+    }
+
+    //退出全屏
+    function guanbi() {
+
+
+        if (document.exitFullscreen) {
+            document.exitFullscreen();
+        }
+        else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+        }
+        else if (document.webkitCancelFullScreen) {
+            document.webkitCancelFullScreen();
+        }
+        else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+        }
+    }
+
+
+    //事件监听
+
+    document.addEventListener("fullscreenchange", function () {
+
+        fullscreenState.innerHTML = (document.fullscreen) ? "" : "not ";
+    }, false);
+
+    document.addEventListener("mozfullscreenchange", function () {
+
+        fullscreenState.innerHTML = (document.mozFullScreen) ? "" : "not ";
+    }, false);
+
+    document.addEventListener("webkitfullscreenchange", function () {
+
+        fullscreenState.innerHTML = (document.webkitIsFullScreen) ? "" : "not ";
+    }, false);
+
+    document.addEventListener("msfullscreenchange", function () {
+
+        fullscreenState.innerHTML = (document.msFullscreenElement) ? "" : "not ";
+    }, false);
+</script>
+
+</html>
+
